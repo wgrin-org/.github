@@ -1,0 +1,55 @@
+# Organization Issues -> WGRIN Development project (https://github.com/orgs/wgrin-org/projects/1).
+# Scheduled reconciliation; see docs/project-sync.md for the design, permissions, setup and runbook.
+#
+# Inactive until the owner sets the repository variable PROJECT_SYNC_ENABLED=true (scheduled runs are skipped before
+# that). A manual run (workflow_dispatch) is a dry run by default. This workflow never starts Claude Code, never checks
+# out or runs code from Issues or pull requests, and has no pull_request trigger.
+name: Project sync
+
+on:
+  schedule:
+    - cron: "7,22,37,52 * * * *"   # every 15 minutes, off the hour (GitHub may delay scheduled runs)
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run: report what would change, write nothing"
+        type: boolean
+        default: true
+
+permissions: {}   # the default GITHUB_TOKEN gets nothing; the GitHub App token is used for the API
+
+concurrency:
+  group: project-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.repository == 'wgrin-org/.github' && (github.event_name == 'workflow_dispatch' || vars.PROJECT_SYNC_ENABLED == 'true')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read   # checkout of this repository's own script only
+    steps:
+      - name: Check out the sync script
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1   # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: scripts/project-sync
+
+      - name: Create a GitHub App installation token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1   # v3.2.0
+        with:
+          client-id: ${{ vars.PROJECT_SYNC_CLIENT_ID }}
+          private-key: ${{ secrets.PROJECT_SYNC_PRIVATE_KEY }}
+          owner: wgrin-org
+          # Narrowed to what the sync needs, even if the App were granted more.
+          permission-issues: read
+          permission-metadata: read
+          permission-organization-projects: write
+
+      - name: Synchronize issues into the project
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && 'true' || 'false' }}
+        run: node scripts/project-sync/sync.mjs
