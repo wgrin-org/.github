@@ -1,0 +1,40 @@
+{
+  "organization": "wgrin-org",
+  "projectNumber": 1,
+  "fields": {
+    "status": "Status",
+    "priority": "Priority",
+    "area": "Area"
+  },
+  "addIssuesCreatedOnOrAfter": "2026-10-08T00:00:00Z",
+  "excludeRepositories": [],
+  "areaByRepository": {
+    ".github": "Coordination",
+    "wgrin.org": "wgrin.org",
+    "bohoty.cz": "bohoty.cz",
+    "inodo.cz": "inodo.cz",
+    "inodb": "INO data",
+    "inodabaz": "INO data",
+    "seoaudit": "seoaudit",
+    "sourcerer": "sourcerer",
+    "dev-environment": "dev-environment"
+  },
+  "defaultStatus": "Backlog",
+  "statusRules": [
+    { "status": "In Progress", "anyLabel": ["status:in-progress", "claude:working"] },
+    { "status": "Blocked", "anyLabel": ["status:blocked"] },
+    { "status": "In Review", "anyLabel": ["status:review"] },
+    { "status": "Ready for Claude", "allLabels": ["status:ready", "claude:ready"] },
+    { "status": "Needs Analysis", "anyLabel": ["status:triage"] }
+  ],
+  "priorityByLabel": {
+    "priority:P0": "P0",
+    "priority:P1": "P1",
+    "priority:P2": "P2",
+    "priority:P3": "P3"
+  },
+  "limits": {
+    "maxMutationsPerRun": 300,
+    "minRateLimitRemaining": 200
+  }
+}
