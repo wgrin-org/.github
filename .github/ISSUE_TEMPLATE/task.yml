@@ -1,0 +1,37 @@
+name: Task
+description: Track a scoped implementation or operational task.
+title: "[Task]: "
+labels: ["type:task", "status:triage"]
+body:
+  - type: markdown
+    attributes:
+      value: "Use the owner repository for implementation work. Do not use this template to request CI, deployment, or infrastructure changes without explicit authorization."
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+      description: What will be true when this is complete?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: "- [ ] Criterion"
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and constraints
+      description: Include affected repositories, dependencies, and explicit exclusions.
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options: [P0, P1, P2, P3]
+  - type: textarea
+    id: claude
+    attributes:
+      label: Manual Claude Code handoff (optional)
+      description: Add only a prepared, user-approved handoff. Claude Code on Win11Dev is never started automatically.

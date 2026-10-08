@@ -1,0 +1,40 @@
+name: Cross-repository coordination
+description: Coordinate work and dependencies spanning two or more repositories.
+title: "[Cross-repo]: "
+labels: ["type:task", "status:triage"]
+body:
+  - type: markdown
+    attributes:
+      value: "Create linked implementation issues in their owner repositories, then track them here."
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+    validations:
+      required: true
+  - type: checkboxes
+    id: repositories
+    attributes:
+      label: Affected repositories
+      options:
+        - label: wgrin.org
+        - label: inodb
+        - label: inodabaz
+        - label: sourcerer
+        - label: seoaudit
+        - label: inodo.cz
+        - label: dev-environment
+        - label: bohoty.cz
+  - type: textarea
+    id: related
+    attributes:
+      label: Related work and dependencies
+      description: Add issue URLs and task-list entries, including blockers.
+      placeholder: "- [ ] https://github.com/wgrin-org/repository/issues/123"
+    validations:
+      required: true
+  - type: textarea
+    id: decisions
+    attributes:
+      label: Decisions and handoffs
+      description: Note ownership, interfaces, and any approved manual Claude Code handoff.
