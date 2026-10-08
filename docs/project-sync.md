@@ -143,3 +143,38 @@ The tests use an in-memory fake of the GraphQL API, with no network or real data
 
 A read-only dry run against the real organization is also possible with a token that can read the project
 (`GH_TOKEN=… DRY_RUN=true node scripts/project-sync/sync.mjs`); it performs queries only.
+
+## 8. Activation record
+
+**Activated 2026-10-08 12:37 UTC** with owner approval:
+- **GitHub App:** `wgrin-project-sync`, installed on all repositories with Issues read, Metadata read and Organization Projects read/write; no webhook.
+- **Repository variables and secret:** `PROJECT_SYNC_CLIENT_ID` and `PROJECT_SYNC_ENABLED=true` (variables), `PROJECT_SYNC_PRIVATE_KEY` (secret).
+- **Project:** the built-in workflow "Item added to project" is **off**.
+- **Dry run** (run 37777600266) and **controlled live run** (run 37778269562):
+  - 9 repositories, 30 open Issues, all already in the project;
+  - 0 mutations and 0 errors;
+  - all 30 items kept Status, Priority, Area and archive state (compared with a snapshot taken before activation);
+  - the logs contain counts only.
+
+## 9. Rollback
+
+**Stop** (immediate and reversible; project data is kept):
+1. In `wgrin-org/.github` → **Settings → Secrets and variables → Actions → Variables**, delete `PROJECT_SYNC_ENABLED` or set it to `false`. Scheduled runs are then skipped.
+2. *or* go to **Actions → Project sync → ⋯ → Disable workflow**.
+
+**Revoke access** (if the key or App is in doubt):
+1. In Organization settings → Developer settings → GitHub Apps → `wgrin-project-sync`, open **Private keys** and delete the key. The workflow then fails with `failed (permission)` and writes nothing.
+2. *or* in Organization settings → GitHub Apps → `wgrin-project-sync`, click **Uninstall** (or **Suspend**).
+
+**Restore the previous project behaviour:**
+1. In the project, open ⋯ → Workflows → "Item added to project" and switch it back **On**. New items then get Status = Backlog from the built-in workflow again.
+2. Use the single Free-plan "Auto-add to project" workflow for one repository if wanted.
+
+**Undo items added by the sync** (rarely needed):
+- The sync only adds items for open Issues created on or after `addIssuesCreatedOnOrAfter`. Archive or delete them in the project (filter by `created:>=` the activation date).
+- Issues, labels and repositories are never changed by the sync, so nothing needs restoring there.
+
+**Remove completely:**
+1. Revert the workflow file.
+2. Delete `PROJECT_SYNC_CLIENT_ID`, `PROJECT_SYNC_ENABLED` and `PROJECT_SYNC_PRIVATE_KEY`.
+3. Delete the GitHub App.
