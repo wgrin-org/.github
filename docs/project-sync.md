@@ -112,6 +112,12 @@ Create a dedicated App: **Organization settings → Developer settings → GitHu
 Set `addIssuesCreatedOnOrAfter` in `config.json` to the activation date, and add an `areaByRepository` entry when a new
 repository should get a different Area than its own name.
 
+**A new repository whose Area is its own name** (for example `viruslab`, created 2026-10-12) needs **no** config entry:
+add an Area option with the repository's name in the project (Project → Settings → Area → Add option). Both layers then
+match it by name, case-insensitively. Only add an `areaByRepository` entry for a *different* Area name, and then change
+the receiver's built-in map in wgrin.org (`ProjectFieldPlanner.cs`, pinned by `ProjectFieldPlannerTests`) in the same
+step, so the two layers stay identical.
+
 **Why this is safe in a public repository:**
 - Secrets are not exposed to workflows from forks, and this workflow has no `pull_request` trigger.
 - Only people with write access to this repository can run it manually.
