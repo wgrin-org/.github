@@ -25,6 +25,7 @@ body:
         - label: inodo.cz
         - label: dev-environment
         - label: bohoty.cz
+        - label: viruslab
   - type: textarea
     id: related
     attributes:

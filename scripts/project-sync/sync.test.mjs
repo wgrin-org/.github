@@ -185,6 +185,12 @@ test('label mapping follows the organization conventions', () => {
   assert.equal(areaFor('unknown', config, areas), null);
 });
 
+test('viruslab gets its Area by name, without a config entry, once the project has a "viruslab" option', () => {
+  assert.equal(config.areaByRepository.viruslab, undefined);   // kept equal to the receiver's built-in map in wgrin.org
+  assert.equal(areaFor('viruslab', config, new Map([['wgrin.org', 'x']])), null);   // until the option exists: areaUnmapped
+  assert.equal(areaFor('viruslab', config, new Map([['wgrin.org', 'x'], ['viruslab', 'v']])), 'viruslab');
+});
+
 // ---------------------------------------------------------------- GraphQL client
 
 function response(status, body, headers = {}) {
